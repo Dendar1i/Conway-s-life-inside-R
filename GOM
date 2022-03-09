@@ -70,7 +70,7 @@ gom <- function(x_matrix)
 }
 
 
-#This code is for a glider gun
+#This code is for a glider
 # x_matrix[4,6] = 1
 # x_matrix[5, 4] = 1
 # x_matrix[5, 6] = 1
