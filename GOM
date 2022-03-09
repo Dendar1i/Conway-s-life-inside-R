@@ -1,0 +1,87 @@
+#install.packages("plot.matrix")
+
+#uncomment above line if you've not installed the package, then just run everything
+#you might have trouble stopping the loop and have to restart R
+
+
+library("plot.matrix")
+#this package lets us plot a matrix so we can visualise the game of life inside R studio's plot space
+
+par(mar=c(2, 2, 2, 2))
+
+#set the side lengths to whatever you like, 35 is good on my laptop
+side = 35
+x_matrix <- matrix(nrow=side, ncol=side)
+x_matrix[] <- rbinom(side^2,1,0.4)
+
+#less_11 and least_1, were when this used a 10*10 matrix
+# they wrap the corners and sides of the game
+
+less_11 <- function(x)
+{
+  if(x>side){
+    x=1
+  }
+  return(x)
+}
+
+least_1 <- function(y)
+{
+  if(y<1){
+    y=side
+  }
+  return(y)
+}
+
+# the sys command gives R time to plot each graph.
+#If you have a faster computer, you could reduce the wait time
+
+gom <- function(x_matrix)
+{
+  
+  p_matrix = matrix(0, ncol = side, nrow = side)
+  neigh = 0
+  rcount = 0
+  ccount = 0
+  plot(x_matrix, asp=TRUE, key=NULL)
+  Sys.sleep(.1)
+  for(row in 1:nrow(x_matrix)) {
+    for(col in 1:ncol(x_matrix)) {
+      rcount = row
+      ccount = col
+      neigh <- x_matrix[least_1(rcount-1), least_1(ccount-1)]+ x_matrix[least_1(rcount-1), ccount]+ x_matrix[least_1(rcount-1), less_11(ccount+1)]+ x_matrix[rcount, least_1(ccount-1)]+ x_matrix[rcount, less_11(ccount+1)]+ x_matrix[less_11(rcount+1), least_1(ccount-1)]+ x_matrix[less_11(rcount+1), ccount]+ x_matrix[less_11(rcount+1), less_11(ccount+1)]
+      if(x_matrix[rcount,ccount] == 1 & neigh >= 2 & neigh <= 3){
+        p_matrix[rcount, ccount] = 1
+      }
+      else if(x_matrix[rcount,ccount] == 0 & neigh == 3){
+        p_matrix[rcount, ccount] = 1
+      }
+      else if(x_matrix[rcount,ccount] == 1)
+      {
+        p_matrix[rcount, ccount] = 0
+      }
+      else if(x_matrix[rcount,ccount] == 0)
+      {
+        p_matrix[rcount, ccount] = 0
+      }
+    }
+  }
+  return(p_matrix)
+}
+
+
+#This code is for a glider gun
+# x_matrix[4,6] = 1
+# x_matrix[5, 4] = 1
+# x_matrix[5, 6] = 1
+# x_matrix[6, 5] = 1
+# x_matrix[6, 6] = 1
+
+while(TRUE)
+{
+  x_matrix <- gom(x_matrix)
+}
+
+
+
+
