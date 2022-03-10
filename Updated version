@@ -1,0 +1,226 @@
+#install.packages("plot.matrix")
+
+#uncomment above line if you've not installed the package, then just run everything
+#you might have trouble stopping the loop and have to restart R
+
+
+library("plot.matrix")
+#this package lets us plot a matrix so we can visualise the game of life inside R studio's plot space
+
+par(mar=c(2, 2, 2, 2))
+
+#set the side lengths to whatever you like, 35 is good on my laptop
+side = 70
+Life <- matrix(nrow=side, ncol=side)
+Life[] <- (0)
+Life[] <- rbinom(side^2,1,0.4)
+
+
+#wrap_ends and wrap_starts, were when this used a 10*10 matrix
+# they wrap the corners and sides of the game
+
+wrap_ends <- function(x)
+{
+  if(x>side){
+    x=1
+  }
+  return(x)
+}
+
+wrap_starts <- function(y)
+{
+  if(y<1){
+    y=side
+  }
+  return(y)
+}
+
+
+# the sys command gives R time to plot each graph.
+#If you have a faster computer, you could reduce the wait time
+
+gom_wrapped <- function(Life)
+{
+  
+  p_matrix = matrix(0, ncol = side, nrow = side)
+  neigh = 0
+  row = 0
+  col = 0
+  plot(Life, asp=TRUE, key=NULL)
+  Sys.sleep(.06)
+  for(row in 1:nrow(Life)) {
+    for(col in 1:ncol(Life)) {
+     
+      
+      neigh <- Life[wrap_starts(row-1), wrap_starts(col-1)]+ Life[wrap_starts(row-1), col]+ Life[wrap_starts(row-1), wrap_ends(col+1)]+ Life[row, wrap_starts(col-1)]+ Life[row, wrap_ends(col+1)]+ Life[wrap_ends(row+1), wrap_starts(col-1)]+ Life[wrap_ends(row+1), col]+ Life[wrap_ends(row+1), wrap_ends(col+1)]
+        
+      if(Life[row,col] == 0 & neigh == 3){
+        p_matrix[row, col] = 1
+      }
+      else if(Life[row,col] == 0)
+      {
+        p_matrix[row, col] = 0
+      }
+      else if(Life[row,col] == 1 & neigh >= 2 & neigh <= 3){
+        p_matrix[row, col] = 1
+      }
+      else if(Life[row,col] == 1)
+      {
+        p_matrix[row, col] = 0
+      }
+      # #makes hard borders
+      # if(row == side | row == 1 | col == side | col == 1)
+      # {
+      #   p_matrix[row, col] = 0
+      # }
+    }
+  }
+  return(p_matrix)
+}
+
+
+# 
+# #This code is for a glider
+# Life[4,6] = 1
+# Life[5, 4] = 1
+# Life[5, 6] = 1
+# Life[6, 5] = 1
+# Life[6, 6] = 1
+# 
+# 
+# # Coe ship
+# Life[16, 18] = 1
+# Life[16, 19] = 1
+# Life[16, 20] = 1
+# Life[16, 21] = 1
+# Life[16, 22] = 1
+# Life[16, 23] = 1
+# Life[17, 16] = 1
+# Life[17, 17] = 1
+# Life[17, 23] = 1
+# Life[18, 14] = 1
+# Life[18, 15] = 1
+# Life[18, 17] = 1
+# Life[18, 23] = 1
+# Life[19, 18] = 1
+# Life[19, 22] = 1
+# Life[20, 20] = 1
+# Life[21, 20] = 1
+# Life[21, 21] = 1
+# Life[22, 19] = 1
+# Life[22, 20] = 1
+# Life[22, 21] = 1
+# Life[22, 22] = 1
+# Life[23, 19] = 1
+# Life[23, 20] = 1
+# Life[23, 22] = 1
+# Life[23, 23] = 1
+# Life[24, 21] = 1
+# Life[24, 22] = 1
+# 
+# 
+# #Lightweight spaceship
+# 
+# Life[10-3, 10] = 1
+# Life[10-3, 11] = 1
+# Life[10-3, 12] = 1
+# Life[10-3, 13] = 1
+# Life[11-3, 10] = 1
+# Life[11-3, 14] = 1
+# Life[12-3, 10] = 1
+# Life[13-3, 11] = 1
+# Life[13-3, 14] = 1
+# 
+# 
+# Life[29, 10+7] = 1
+# Life[29, 10+8] = 1
+# Life[29, 10+11] = 1
+# Life[29, 10+12] = 1
+# Life[30, 10+9] = 1
+# Life[30, 10+10] = 1
+# Life[31, 10+9] = 1
+# Life[31, 10+10] = 1
+# Life[32, 10+8] = 1
+# Life[32, 10+11] = 1
+# Life[32, 10+6] = 1
+# Life[32, 10+13] = 1
+# Life[33, 10+6] = 1
+# Life[33, 10+13] = 1
+# Life[35, 10+6] = 1
+# Life[35, 10+13] = 1
+# Life[36, 10+7] = 1
+# Life[36, 10+8] = 1
+# Life[36, 10+11] = 1
+# Life[36, 10+12] = 1
+# Life[37, 10+8] = 1
+# Life[37, 10+9] = 1
+# Life[37, 10+10] = 1
+# Life[37, 10+11] = 1
+# Life[39, 10+9] = 1
+# Life[39, 10+10] = 1
+# Life[40, 10+9] = 1
+# Life[40, 10+10] = 1
+# 
+# 
+# Life[10+7,9+1+10] = 1
+# Life[10+8,9+1+9] = 1
+# Life[10+8,9+1+11] = 1
+# Life[10+9,9+1+8] = 1
+# Life[10+9,9+1+9] = 1
+# Life[10+9,9+1+11] = 1
+# Life[10+9,9+1+12] = 1
+# Life[10+10, 9+9] = 1
+# Life[10+10, 9+12] = 1
+# Life[10+11, 9+8] = 1
+# Life[10+11, 9+9] = 1
+# Life[10+11, 9+11] = 1
+# Life[10+11, 9+12] = 1
+# Life[10+12, 9+9] = 1
+# Life[10+12, 9+11] = 1
+# Life[10+13, 9+10] = 1
+# 
+# 
+# #acorn 5206 generations (43 mins at this speed) *wrapping will probbly mess this up
+# # this final pattern 633 cells and covers an area of 215 by 168 cells. Probably just turn of wrapping 
+# 
+# 
+# Life[10+10, 10+10] = 1
+# Life[10+11, 10+12] = 1
+# Life[10+12, 10+9] = 1
+# Life[10+12, 10+10] = 1
+# Life[10+12, 10+13] = 1
+# Life[10+12, 10+14] = 1
+# Life[10+12, 10+15] = 1
+# 
+# 
+# 
+# 
+# 
+# #lidka predecessor (29126) 242 hours
+# 
+# Life[3+ceiling(side/2) - 3, 4+side/2 + 2] = 1
+# 
+# Life[3+ceiling(side/2) - 2, 4+side/2 + 2] = 1
+# Life[3+ceiling(side/2) - 2, 4+side/2 + 3] = 1
+# Life[3+ceiling(side/2) - 2, 4+side/2 + 4] = 1
+# 
+# Life[3+ceiling(side/2), 4+side/2 - 1] = 1
+# Life[3+ceiling(side/2), 4+side/2] = 1
+# Life[3+ceiling(side/2), 4+side/2 + 4] = 1
+# 
+# Life[3+ceiling(side/2) + 1, 4+side/2 - 1] = 1
+# Life[3+ceiling(side/2) + 1, 4+side/2 + 4] = 1
+# 
+# Life[3+ceiling(side/2) + 2, 4+side/2 - 4] = 1
+# Life[3+ceiling(side/2) + 2, 4+side/2 - 3] = 1
+# Life[3+ceiling(side/2) + 2, 4+side/2 - 2] = 1
+# Life[3+ceiling(side/2) + 2, 4+side/2 + 4] = 1
+
+#Run conway's game of life
+
+while(TRUE)
+{
+  Life <- gom_wrapped(Life)
+}
+
+
